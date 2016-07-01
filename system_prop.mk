@@ -63,6 +63,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     vendor.audio_hal.period_size=192 \
     persist.audio.vns.mode=2
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.vc_call_vol_steps=7
+
 # Enalbe modem fast dormancy function
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.env.fastdorm.enabled=true \
