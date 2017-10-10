@@ -124,6 +124,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.qualcomm.bluetooth.opp=true \
     ro.qualcomm.bluetooth.pbap=true
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    debug.sf.latch_unsignaled=1
+
 # Maintainer
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.mk.maintainer=guaiyihu
