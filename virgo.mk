@@ -247,6 +247,10 @@ PRODUCT_PACKAGES += \
     libnl_2 \
     libbson
 
+# XiaomiParts
+PRODUCT_PACKAGES += \
+    XiaomiParts
+
 # ANT+
 PRODUCT_PACKAGES += \
     AntHalService \
