@@ -138,9 +138,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/acdb/MTP/MTP_Speaker_cal.acdb:system/etc/acdbdata/MTP/MTP_Speaker_cal.acdb
 
 # Bluetooth
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/bl_lut.txt:system/etc/bl_lut.txt
-
 PRODUCT_PACKAGES += \
     bdaddr_xiaomi
 
