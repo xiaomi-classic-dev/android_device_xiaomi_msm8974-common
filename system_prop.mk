@@ -54,13 +54,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.qc.sdk.camera.facialproc=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.qc.sdk.audio.ssr=false \
-    ro.qc.sdk.audio.fluencetype=fluence \
-    use.voice.path.for.pcm.voip=true \
-    persist.audio.fluence.voicecall=true \
-    persist.audio.fluence.voicerec=false \
+    ro.vendor.audio.sdk.ssr=false \
+    ro.vendor.audio.sdk.fluencetype=fluence \
+    vendor.voice.path.for.pcm.voip=true \
+    persist.vendor.audio.fluence.voicecall=true \
+    persist.vendor.audio.fluence.voicerec=false \
     af.fast_track_multiplier=1 \
-    audio_hal.period_size=192 \
+    vendor.audio_hal.period_size=192 \
     persist.audio.vns.mode=2
 
 # Enalbe modem fast dormancy function
