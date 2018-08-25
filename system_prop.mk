@@ -100,7 +100,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.hwui.use_buffer_age=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    qcom.bluetooth.soc=smd \
+    vendor.qcom.bluetooth.soc=smd \
     ro.bluetooth.hfp.ver=1.7 \
     ro.qualcomm.bt.hci_transport=smd \
     ro.bluetooth.dun=false \
