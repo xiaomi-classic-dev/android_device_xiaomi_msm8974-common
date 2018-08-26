@@ -104,10 +104,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.qualcomm.bluetooth.opp=true \
     ro.qualcomm.bluetooth.pbap=true
 
-# Vendor security patch level
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.mk.build.vendor_security_patch=2017-06-01
-
 # Maintainer
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.mk.maintainer=guaiyihu
