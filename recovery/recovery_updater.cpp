@@ -183,6 +183,6 @@ Value *VerifyBasebandFn(const char *name, State *state, const std::vector<std::u
     return StringValue(strdup(ret ? "1":"0"));
 }
 
-void Register_librecovery_updater_virgo() {
-    RegisterFunction("virgo.verify_baseband", VerifyBasebandFn);
+void Register_librecovery_updater_xiaomi() {
+    RegisterFunction("xiaomi.verify_baseband", VerifyBasebandFn);
 }

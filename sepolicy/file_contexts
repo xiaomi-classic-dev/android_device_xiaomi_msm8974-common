@@ -8,4 +8,3 @@
 
 #============= cmhw ==============
 /sys/vibrator/pwmvalue                                       u:object_r:vibeamp_sysfs:s0
-/sys/bus/i2c/drivers/cyttsp_streetfighter/2-0028/keys_off    u:object_r:display_sysfs:s0

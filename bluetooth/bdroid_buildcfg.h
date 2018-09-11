@@ -22,9 +22,25 @@
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
-#define BLUETOOTH_QTI_SW TRUE
+#include <cutils/properties.h>
+#include <string.h>
 
-#define BTM_DEF_LOCAL_NAME   "Xiaomi Note LTE"
+static inline const char* BtmGetDefaultName()
+{
+    char product_device[PROPERTY_VALUE_MAX];
+    property_get("ro.product.device", product_device, "");
+
+    if (strstr(product_device, "cancro"))
+        return "Xiaomi MI3W";
+    if (strstr(product_device, "virgo"))
+        return "Xiaomi Note LTE";
+
+    // Fallback to ro.product.model
+    return "";
+}
+
+#define BTM_DEF_LOCAL_NAME BtmGetDefaultName()
+#define BLUETOOTH_QTI_SW TRUE
 // Enables Interleave scan
 #define BTA_SKIP_BLE_READ_REMOTE_FEAT TRUE
 #define BTA_HOST_INTERLEAVE_SEARCH  TRUE

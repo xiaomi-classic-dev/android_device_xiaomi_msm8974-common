@@ -17,11 +17,9 @@
 
 set -e
 
-# Required!
-DEVICE=virgo
-VENDOR=xiaomi
+INITIAL_COPYRIGHT_YEAR=2017
 
-# Load extractutils and do some sanity checks
+# Load extract_utils and do some sanity checks
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 
@@ -34,14 +32,24 @@ if [ ! -f "$HELPER" ]; then
 fi
 . "$HELPER"
 
-# Initialize the helper
+# Initialize the helper for common device
+setup_vendor "$DEVICE_COMMON" "$VENDOR" "$MK_ROOT" true
+
+# Copyright headers and common guards
+write_headers "cancro virgo"
+
+write_makefiles "$MY_DIR"/common-proprietary-files.txt
+
+write_footers
+
+# Reinitialize the helper for device
+INITIAL_COPYRIGHT_YEAR="$DEVICE_BRINGUP_YEAR"
 setup_vendor "$DEVICE" "$VENDOR" "$MK_ROOT"
 
 # Copyright headers and guards
 write_headers
 
-# The standard blobs
+write_makefiles "$MY_DIR"/../$DEVICE/device-proprietary-files.txt
 write_makefiles "$MY_DIR"/proprietary-files.txt
 
-# We are done!
 write_footers

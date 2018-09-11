@@ -68,12 +68,52 @@ on post-fs-data
     chmod 777 /data/qmi-framework-tests/qmi_xiaomi_id_test
     mkdir /persist/property 0700 root root
 
+    chmod 0600 /dev/bcm2079x
+    chown nfc nfc /dev/bcm2079x
+    mkdir /data/nfc
+    mkdir /data/nfc/param
+    chmod 0700 /data/nfc
+    chmod 0700 /data/nfc/param
+    chown nfc nfc /data/nfc
+    chown nfc nfc /data/nfc/param
+
     chown system system /dev/sysmatdrv
     chmod 0660 /dev/sysmatdrv
 
     # Torch
     chown system camera /sys/class/leds/torch-light/brightness
     chmod 0660 /sys/class/leds/torch-light/brightness
+
+    # Dynamic FPS
+    chown system graphics /sys/class/graphics/fb0/dynamic_fps
+    chmod 0644 /sys/class/graphics/fb0/dynamic_fps
+
+    # VibratorHW
+    chown root system /sys/class/timed_output/vibrator/amp
+    chmod 0664 /sys/class/timed_output/vibrator/amp
+    restorecon /sys/class/timed_output/vibrator/amp
+
+    #  KeyDisabler
+    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/keys_off
+    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/keys_off
+    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/keys_off
+    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/keys_off
+    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/keys_off
+    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/keys_off
+
+    # HighTouchSensitivity
+    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/sensitive_mode
+    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/sensitive_mode
+    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/sensitive_mode
+    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/sensitive_mode
+    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/sensitive_mode
+    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/sensitive_mode
+    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/stylus
+    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/stylus
+    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/stylus
+    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/stylus
+    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/stylus
+    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/stylus
 
     # RBG calibration
     chown system system /sys/devices/virtual/graphics/fb0/rgb
@@ -115,6 +155,17 @@ on property:persist.usb.chgdisabled=1
 
 on property:persist.usb.chgdisabled=0
     write /sys/class/power_supply/battery/charging_enabled 1
+
+# NFC
+   setprop ro.nfc.port "I2C"
+    chmod 0600 /dev/bcm2079x
+    chown nfc nfc /dev/bcm2079x
+    mkdir /data/nfc
+    mkdir /data/nfc/param
+    chmod 0700 /data/nfc
+    chmod 0700 /data/nfc/param
+    chown nfc nfc /data/nfc
+    chown nfc nfc /data/nfc/param
 
 #start camera server as daemon
 service qcamerasvr /vendor/bin/mm-qcamera-daemon

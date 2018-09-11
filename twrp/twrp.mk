@@ -17,4 +17,4 @@ TW_NO_SCREEN_TIMEOUT                            := true
 TW_NO_SCREEN_BLANK                              := true
 TW_EXTRA_LANGUAGES                              := true
 
-PRODUCT_COPY_FILES += device/xiaomi/virgo/twrp/twrp.fstab:recovery/root/etc/twrp.fstab
+PRODUCT_COPY_FILES += $(PLATFORM_PATH)//twrp/twrp.fstab:recovery/root/etc/twrp.fstab
