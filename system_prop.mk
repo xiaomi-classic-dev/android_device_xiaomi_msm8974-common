@@ -67,6 +67,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.media_vol_steps=25 \
     ro.config.vc_call_vol_steps=7
 
+# Memory optimizations
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.qti.sys.fw.bservice_enable=true
+
 # Enalbe modem fast dormancy function
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.env.fastdorm.enabled=true \
