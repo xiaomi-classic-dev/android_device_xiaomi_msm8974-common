@@ -93,27 +93,18 @@ on post-fs-data
     chmod 0664 /sys/class/timed_output/vibrator/amp
     restorecon /sys/class/timed_output/vibrator/amp
 
-    #  KeyDisabler
-    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/keys_off
-    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/keys_off
-    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/keys_off
-    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/keys_off
-    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/keys_off
-    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/keys_off
+    # KeyDisabler
+    chown root system /proc/touchscreen/nav_button_enable
+    chmod 0664 /proc/touchscreen/nav_button_enable
+    restorecon /proc/touchscreen/nav_button_enable
 
     # HighTouchSensitivity
-    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/sensitive_mode
-    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/sensitive_mode
-    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/sensitive_mode
-    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/sensitive_mode
-    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/sensitive_mode
-    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/sensitive_mode
-    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/stylus
-    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/stylus
-    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts/2-004a/stylus
-    chown root system /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/stylus
-    chmod 0664 /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/stylus
-    restorecon /sys/bus/i2c/drivers/atmel_mxt_ts_640t/2-004b/stylus
+    chown root system /proc/touchscreen/sensitive_mode
+    chmod 0664 /proc/touchscreen/sensitive_mode
+    restorecon /proc/touchscreen/sensitive_mode
+    chown root system /proc/touchscreen/stylus
+    chmod 0664 /proc/touchscreen/stylus
+    restorecon /proc/touchscreen/stylus
 
     # RBG calibration
     chown system system /sys/devices/virtual/graphics/fb0/rgb
