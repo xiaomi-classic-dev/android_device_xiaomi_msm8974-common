@@ -118,6 +118,10 @@ PRODUCT_PACKAGES += \
     mke2fs_static \
     resize2fs_static
 
+# Gatekeeper
+PRODUCT_PACKAGES += \
+    android.hardware.gatekeeper@1.0-service.software
+
 # GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
