@@ -19,9 +19,9 @@ package org.mokee.device;
 
 import android.os.Bundle;
 import android.os.SystemProperties;
-import android.support.v14.preference.PreferenceFragment;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.ListPreference;
+import androidx.preference.PreferenceFragment;
+import androidx.preference.Preference;
+import androidx.preference.ListPreference;
 
 public class DeviceSettings extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener {
