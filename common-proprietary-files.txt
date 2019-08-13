@@ -1,6 +1,7 @@
 # Bluetooth
 bin/hci_qcomm_init:vendor/bin/hci_qcomm_init|7603d99cdbdc1b83af71aafcef957c48e90ba9ae
-vendor/lib/libaptX_encoder.so|b03772672144d4b750a5672c2922aded93bb0512
+vendor/lib/libaptX_encoder.so|984739a0bc968e18f75ced205733fe3f51c2d4f0
+vendor/lib/libaptXHD_encoder.so|974c486e4ca03faa0713553d9dfe2995ac93e01c
 vendor/lib/libbtnv.so|e0ba4b0c4fc6ab38b2504bea1596ff58dfe6c307
 
 # ADSP
