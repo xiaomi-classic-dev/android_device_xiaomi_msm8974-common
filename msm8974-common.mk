@@ -180,6 +180,10 @@ PRODUCT_PACKAGES += \
     libOmxVenc \
     libstagefrighthw
 
+# messaging
+PRODUCT_PACKAGES += \
+    messaging
+
 # Misc dependency packages
 PRODUCT_PACKAGES += \
     ebtables \
