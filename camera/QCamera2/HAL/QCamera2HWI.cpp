@@ -52,8 +52,6 @@
 
 #define HDR_CONFIDENCE_THRESHOLD 0.4
 
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
-
 namespace qcamera {
 
 cam_capability_t *gCamCapability[MM_CAMERA_MAX_NUM_SENSORS];
@@ -425,43 +423,11 @@ int QCamera2HardwareInterface::start_recording(struct camera_device *device)
 {
     ATRACE_CALL();
     int ret = NO_ERROR;
-    int width, height;
     QCamera2HardwareInterface *hw =
         reinterpret_cast<QCamera2HardwareInterface *>(device->priv);
     if (!hw) {
         ALOGE("NULL camera device");
         return BAD_VALUE;
-    }
-
-    // Preview window changes for 720p and higher
-    hw->mParameters.getVideoSize(&width, &height);
-    if ((width * height) >= (1280 * 720)) {
-        char *orig_params = hw->getParameters();
-        if (orig_params) {
-            android::CameraParameters params;
-            params.unflatten(android::String8(orig_params));
-            hw->putParameters(orig_params);
-
-            // Set preview size to video size
-            char video_dim[10];
-            snprintf(video_dim, sizeof(video_dim), "%dx%d", width, height);
-            params.set("preview-size", video_dim);
-
-            const char *hfrStr = params.get("video-hfr");
-            const char *hsrStr = params.get("video-hsr");
-
-            // Use yuv420sp for high framerates
-            if ((hfrStr != NULL && strcmp(hfrStr, "off")) ||
-                (hsrStr != NULL && strcmp(hsrStr, "off")))
-                params.set("preview-format", "yuv420sp");
-            else
-                params.set("preview-format", "nv12-venus");
-
-            hw->set_parameters(device, params.flatten().string());
-            // Restart preview to propagate changes to preview window
-            hw->stop_preview(device);
-            hw->start_preview(device);
-        }
     }
     CDBG_HIGH("[KPI Perf] %s: E PROFILE_START_RECORDING", __func__);
     hw->lockAPI();
@@ -708,8 +674,6 @@ int QCamera2HardwareInterface::take_picture(struct camera_device *device)
     }
 
     hw->unlockAPI();
-    hw->mLastCaptureTime = systemTime();
-
     CDBG_HIGH("[KPI Perf] %s: X", __func__);
     return ret;
 }
@@ -810,23 +774,7 @@ char* QCamera2HardwareInterface::get_parameters(struct camera_device *device)
     int32_t rc = hw->processAPI(QCAMERA_SM_EVT_GET_PARAMS, NULL);
     if (rc == NO_ERROR) {
         hw->waitAPIResult(QCAMERA_SM_EVT_GET_PARAMS, &apiResult);
-
-        if (apiResult.params) {
-            android::CameraParameters params;
-            params.unflatten(android::String8(apiResult.params));
-            hw->putParameters(apiResult.params);
-
-            // Hide nv12-venus from userspace to prevent framework crash
-            const char *fmt = params.get("preview-format");
-            if (fmt && !strcmp(fmt, "nv12-venus")) {
-                params.set("preview-format", "yuv420sp");
-            }
-
-            // Set exposure-time-values param for CameraNext slow-shutter
-            params.set("exposure-time-values", "0");
-
-            ret = strdup(params.flatten().string());
-        }
+        ret = apiResult.params;
     }
     hw->unlockAPI();
 
@@ -1098,9 +1046,7 @@ QCamera2HardwareInterface::QCamera2HardwareInterface(uint32_t cameraId)
       mPreviewFrameSkipValid(0),
       mAdvancedCaptureConfigured(false),
       mNumPreviewFaces(-1),
-      mVideoMem(NULL),
-      mLastAFScanTime(0),
-      mLastCaptureTime(0)
+      mVideoMem(NULL)
 {
     getLogLevel();
     ATRACE_CALL();
@@ -1259,8 +1205,8 @@ int QCamera2HardwareInterface::openCamera()
 
     //check if video size 4k x 2k support is enabled
     property_get("persist.camera.4k2k.enable", value, "0");
-    enable_4k2k = 1; //atoi(value) > 0 ? 1 : 0;
-    //ALOGD("%s: enable_4k2k is %d", __func__, enable_4k2k);
+    enable_4k2k = atoi(value) > 0 ? 1 : 0;
+    ALOGD("%s: enable_4k2k is %d", __func__, enable_4k2k);
     if (!enable_4k2k) {
        //if the 4kx2k size exists in the supported preview size or
        //supported video size remove it
@@ -1392,74 +1338,6 @@ int QCamera2HardwareInterface::closeCamera()
     return rc;
 }
 
-static cam_dimension_t new_pic_sizes_cam0[] = {
-    {4208, 3120},
-    {4160, 3120},
-    {4160, 2340},
-    {4000, 3000},
-    {4096, 2160},
-    {3200, 2400},
-    {3200, 1800},
-    {2592, 1944},
-    {2048, 1536},
-    {1920, 1080},
-    {1600, 1200},
-    {1280, 768},
-    {1280, 720},
-    {1024, 768},
-    {800, 600},
-    {800, 480},
-    {720, 480},
-    {640, 480},
-    {320, 240}
-};
-
-static cam_dimension_t new_vid_sizes_cam0[] = {
-    {4096, 2160},
-    {3840, 2160},
-    {2560, 1440},
-    {1920, 1080},
-    {1280, 720},
-    {800, 480},
-    {720, 480},
-    {640, 480},
-    {320, 240}
-};
-
-static cam_dimension_t new_prvw_sizes_cam0[] = {
-    {4096, 2160},
-    {3840, 2160},
-    {2560, 1440},
-    {1920, 1080},
-    {1440, 1080},
-    {1280, 720},
-    {720, 480},
-    {640, 480},
-    {320, 240}
-};
-
-static cam_dimension_t new_vid_sizes_cam1[] = {
-    {2560, 1440},
-    {1920, 1080},
-    {1280, 720},
-    {864, 480},
-    {800, 480},
-    {720, 480},
-    {640, 480},
-    {320, 240}
-};
-
-static cam_dimension_t new_prvw_sizes_cam1[] = {
-    {2560, 1440},
-    {1920, 1080},
-    {1440, 1080},
-    {1280, 720},
-    {720, 480},
-    {640, 480},
-    {576, 432},
-    {320, 240}
-};
-
 #define DATA_PTR(MEM_OBJ,INDEX) MEM_OBJ->getPtr( INDEX )
 
 /*===========================================================================
@@ -1480,7 +1358,6 @@ int QCamera2HardwareInterface::initCapabilities(uint32_t cameraId,
     ATRACE_CALL();
     int rc = NO_ERROR;
     QCameraHeapMemory *capabilityHeap = NULL;
-    size_t i, x;
 
     /* Allocate memory for capability buffer */
     capabilityHeap = new QCameraHeapMemory(QCAMERA_ION_USE_CACHE);
@@ -1515,54 +1392,6 @@ int QCamera2HardwareInterface::initCapabilities(uint32_t cameraId,
     memcpy(gCamCapability[cameraId], DATA_PTR(capabilityHeap,0),
                                         sizeof(cam_capability_t));
 
-    // Re-order HDR exposure sequence to prevent screen flash on last frame
-    gCamCapability[cameraId]->hdr_bracketing_setting.exp_val.values[0] = -6;
-    gCamCapability[cameraId]->hdr_bracketing_setting.exp_val.values[1] = 6;
-    gCamCapability[cameraId]->hdr_bracketing_setting.exp_val.values[2] = 0;
-
-    // Inject modified video/preview size tables
-    if (gCamCapability[cameraId]->position == CAM_POSITION_BACK) {
-        for (i = 0; i < ARRAY_SIZE(new_pic_sizes_cam0); i++)
-            gCamCapability[cameraId]->picture_sizes_tbl[i] = new_pic_sizes_cam0[i];
-        gCamCapability[cameraId]->picture_sizes_tbl_cnt = ARRAY_SIZE(new_pic_sizes_cam0);
-
-        for (i = 0; i < ARRAY_SIZE(new_vid_sizes_cam0); i++)
-            gCamCapability[cameraId]->video_sizes_tbl[i] = new_vid_sizes_cam0[i];
-        gCamCapability[cameraId]->video_sizes_tbl_cnt = ARRAY_SIZE(new_vid_sizes_cam0);
-
-        for (i = 0; i < ARRAY_SIZE(new_vid_sizes_cam0); i++)
-            gCamCapability[cameraId]->livesnapshot_sizes_tbl[i] = new_vid_sizes_cam0[i];
-        gCamCapability[cameraId]->livesnapshot_sizes_tbl_cnt = ARRAY_SIZE(new_vid_sizes_cam0);
-
-        for (i = 0; i < ARRAY_SIZE(new_prvw_sizes_cam0); i++)
-            gCamCapability[cameraId]->preview_sizes_tbl[i] = new_prvw_sizes_cam0[i];
-        gCamCapability[cameraId]->preview_sizes_tbl_cnt = ARRAY_SIZE(new_prvw_sizes_cam0);
-
-        // Add 90FPS HFR mode up to 720p
-        x = CAM_HFR_MODE_90FPS;
-        gCamCapability[cameraId]->hfr_tbl[x].mode = (cam_hfr_mode_t)x;
-        gCamCapability[cameraId]->hfr_tbl[x].dim = (cam_dimension_t){1280, 720};
-        gCamCapability[cameraId]->hfr_tbl[x].frame_skip = 0;
-        gCamCapability[cameraId]->hfr_tbl[x].livesnapshot_sizes_tbl_cnt =
-                                        gCamCapability[cameraId]->hfr_tbl[CAM_HFR_MODE_120FPS].livesnapshot_sizes_tbl_cnt;
-        for (i = 0; i < gCamCapability[cameraId]->hfr_tbl[x].livesnapshot_sizes_tbl_cnt; i++)
-            gCamCapability[cameraId]->hfr_tbl[x].livesnapshot_sizes_tbl[i] =
-                                        gCamCapability[cameraId]->hfr_tbl[CAM_HFR_MODE_60FPS].livesnapshot_sizes_tbl[i];
-        gCamCapability[cameraId]->hfr_tbl_cnt = 3;
-    } else if (gCamCapability[cameraId]->position == CAM_POSITION_FRONT) {
-        for (i = 0; i < ARRAY_SIZE(new_vid_sizes_cam1); i++)
-            gCamCapability[cameraId]->video_sizes_tbl[i] = new_vid_sizes_cam1[i];
-        gCamCapability[cameraId]->video_sizes_tbl_cnt = ARRAY_SIZE(new_vid_sizes_cam1);
-
-        for (i = 0; i < ARRAY_SIZE(new_prvw_sizes_cam1); i++)
-            gCamCapability[cameraId]->preview_sizes_tbl[i] = new_prvw_sizes_cam1[i];
-        gCamCapability[cameraId]->preview_sizes_tbl_cnt = ARRAY_SIZE(new_prvw_sizes_cam1);
-
-        for (i = 0; i < ARRAY_SIZE(new_vid_sizes_cam1); i++)
-            gCamCapability[cameraId]->livesnapshot_sizes_tbl[i] = new_vid_sizes_cam1[i];
-        gCamCapability[cameraId]->livesnapshot_sizes_tbl_cnt = ARRAY_SIZE(new_vid_sizes_cam1);
-    }
-
     //copy the preview sizes and video sizes lists because they
     //might be changed later
     copyList(gCamCapability[cameraId]->preview_sizes_tbl, savedSizes[cameraId].all_preview_sizes,
@@ -1581,8 +1410,7 @@ map_failed:
     capabilityHeap->deallocate();
     delete capabilityHeap;
 allocate_failed:
-return rc;
-
+    return rc;
 }
 
 /*===========================================================================

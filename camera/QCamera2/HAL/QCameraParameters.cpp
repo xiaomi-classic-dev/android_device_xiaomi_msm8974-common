@@ -1209,11 +1209,6 @@ int32_t QCameraParameters::setPreviewSize(const QCameraParameters& params)
             // set the new value
             CDBG_HIGH("%s: Requested preview size %d x %d", __func__, width, height);
             CameraParameters::setPreviewSize(width, height);
-
-            // Disable video HDR for 4k DCI
-            if ((width * height) == (4096 * 2160))
-                setVideoHDR(VALUE_OFF);
-
             return NO_ERROR;
         }
     }
@@ -1891,14 +1886,6 @@ int32_t QCameraParameters::setPreviewFrameRate(const QCameraParameters& params)
 {
     const char *str = params.get(KEY_PREVIEW_FRAME_RATE);
     const char *prev_str = get(KEY_PREVIEW_FRAME_RATE);
-    int width, height;
-
-    // Force better preview size for WeChat
-    if (!strcmp(str, "15")) {
-        params.getPreviewSize(&width, &height);
-        if (width == 320 && height == 240)
-            CameraParameters::setPreviewSize(640, 480);
-    }
 
     if ( str ) {
         if ( prev_str &&
@@ -2473,17 +2460,8 @@ int32_t QCameraParameters::setSceneDetect(const QCameraParameters& params)
  *==========================================================================*/
 int32_t QCameraParameters::setVideoHDR(const QCameraParameters& params)
 {
-    const char *str;
+    const char *str = params.get(KEY_QC_VIDEO_HDR);
     const char *prev_str = get(KEY_QC_VIDEO_HDR);
-    int width, height;
-
-    // Disable video HDR for 4k DCI
-    params.getPreviewSize(&width, &height);
-    if ((width * height) == (4096 * 2160))
-        str = VALUE_OFF;
-    else
-        str = params.get(KEY_QC_VIDEO_HDR);
-
     if (str != NULL) {
         if (prev_str == NULL ||
             strcmp(str, prev_str) != 0) {
@@ -4211,10 +4189,8 @@ int32_t QCameraParameters::initDefaultParameters()
         set(KEY_SUPPORTED_PREVIEW_SIZES, previewSizeValues.string());
         CDBG_HIGH("%s: supported preview sizes: %s", __func__, previewSizeValues.string());
         // Set default preview size
-        if (m_pCapability->position == CAM_POSITION_BACK)
-            CameraParameters::setPreviewSize(1920, 1080);
-        else
-            CameraParameters::setPreviewSize(1280, 720);
+        CameraParameters::setPreviewSize(m_pCapability->preview_sizes_tbl[0].width,
+                                         m_pCapability->preview_sizes_tbl[0].height);
     } else {
         ALOGE("%s: supported preview sizes cnt is 0 or exceeds max!!!", __func__);
     }
@@ -4227,16 +4203,12 @@ int32_t QCameraParameters::initDefaultParameters()
         set(KEY_SUPPORTED_VIDEO_SIZES, videoSizeValues.string());
         CDBG_HIGH("%s: supported video sizes: %s", __func__, videoSizeValues.string());
         // Set default video size
-        if (m_pCapability->position == CAM_POSITION_BACK)
-            CameraParameters::setVideoSize(1920, 1080);
-        else
-            CameraParameters::setVideoSize(1280, 720);
+        CameraParameters::setVideoSize(m_pCapability->video_sizes_tbl[0].width,
+                                       m_pCapability->video_sizes_tbl[0].height);
 
         //Set preferred Preview size for video
-        if (m_pCapability->position == CAM_POSITION_BACK)
-            set(KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO, "1920x1080");
-        else
-            set(KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO, "1280x720");
+        String8 vSize = createSizesString(&m_pCapability->video_sizes_tbl[0], 1);
+        set(KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO, vSize.string());
     } else {
         ALOGE("%s: supported video sizes cnt is 0 or exceeds max!!!", __func__);
     }
@@ -4466,7 +4438,7 @@ int32_t QCameraParameters::initDefaultParameters()
             ANTIBANDING_MODES_MAP,
             PARAM_MAP_SIZE(ANTIBANDING_MODES_MAP));
     set(KEY_SUPPORTED_ANTIBANDING, antibandingValues);
-    setAntibanding(ANTIBANDING_AUTO);
+    setAntibanding(ANTIBANDING_OFF);
 
     // Set Effect
     String8 effectValues = createValuesString(
@@ -5671,15 +5643,6 @@ int32_t  QCameraParameters::setExposureTime(const char *expTimeStr)
         int32_t min_exp_time = m_pCapability->min_exposure_time; /* 200 */
         int32_t max_exp_time = m_pCapability->max_exposure_time; /* 2000000 */
 
-        // Cap exposure time to upper/lower limits without returning an error
-        // to prevent crashes in CameraNext
-        if (expTimeUs) {
-            if (expTimeUs > max_exp_time)
-                expTimeUs = max_exp_time;
-            else if (expTimeUs < min_exp_time)
-                expTimeUs = min_exp_time;
-        }
-
         // expTime == 0 means not to use manual exposure time.
         if (expTimeUs == 0 ||
             (expTimeUs >= min_exp_time && expTimeUs <= max_exp_time)) {
@@ -5823,9 +5786,6 @@ int32_t QCameraParameters::setFlash(const char *flashStr)
             if ( NULL != m_pTorch ) {
                 if ( value == CAM_FLASH_MODE_TORCH && !m_bRecordingHint_new) {
                     m_pTorch->prepareTorchCamera();
-                    // Set preview size to 1080p to fix torch w/ trusted-face usecase,
-                    // without breaking camera in some silly banking apps (like BofA)
-                    CameraParameters::setPreviewSize(1920, 1080);
                 } else {
                     m_bReleaseTorchCamera = true;
                 }
@@ -5950,7 +5910,7 @@ int32_t QCameraParameters::setTintlessValue(const QCameraParameters& params)
     char prop[PROPERTY_VALUE_MAX];
 
     memset(prop, 0, sizeof(prop));
-    property_get("persist.camera.tintless", prop, VALUE_ENABLE);
+    property_get("persist.camera.tintless", prop, VALUE_DISABLE);
     if (str != NULL) {
         if (prev_str == NULL ||
             strcmp(str, prev_str) != 0) {
@@ -6266,12 +6226,8 @@ int QCameraParameters::getAutoFlickerMode()
 int32_t QCameraParameters::setAntibanding(const char *antiBandingStr)
 {
     if (antiBandingStr != NULL) {
-	int32_t value = lookupAttr(ANTIBANDING_MODES_MAP, PARAM_MAP_SIZE(ANTIBANDING_MODES_MAP),
-							antiBandingStr);
-        if (value == CAM_ANTIBANDING_MODE_OFF) {
-            /* Never disable antibanding */
-            return NO_ERROR;
-        }
+        int32_t value = lookupAttr(ANTIBANDING_MODES_MAP, PARAM_MAP_SIZE(ANTIBANDING_MODES_MAP),
+                antiBandingStr);
         if (value != NAME_NOT_FOUND) {
             CDBG("%s: Setting AntiBanding value %s", __func__, antiBandingStr);
             updateParamEntry(KEY_ANTIBANDING, antiBandingStr);
@@ -7592,7 +7548,7 @@ int32_t QCameraParameters::getStreamFormat(cam_stream_type_t streamType,
         break;
     case CAM_STREAM_TYPE_RAW:
         if (mPictureFormat >= CAM_FORMAT_YUV_RAW_8BIT_YUYV) {
-            format = CAM_FORMAT_BAYER_QCOM_RAW_10BPP_RGGB;
+            format = (cam_format_t)mPictureFormat;
         } else {
             char raw_format[PROPERTY_VALUE_MAX];
             int rawFormat;
