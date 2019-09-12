@@ -39,9 +39,6 @@ TARGET_CPU_ABI2     := armeabi
 TARGET_CPU_SMP      := true
 TARGET_CPU_VARIANT  := krait
 
-# ANT+
-BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
-
 # Audio
 BOARD_USES_ALSA_AUDIO                      := true
 USE_CUSTOM_AUDIO_POLICY                    := 1
