@@ -169,10 +169,6 @@ TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness
 # Security patch level
 VENDOR_SECURITY_PATCH := 2017-06-01
 
-# SELinux
-include device/qcom/sepolicy-legacy/sepolicy.mk
-BOARD_SEPOLICY_DIRS += $(PLATFORM_PATH)/sepolicy
-
 # Time service
 BOARD_USES_QC_TIME_SERVICES := true
 
