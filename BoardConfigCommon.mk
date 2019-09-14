@@ -157,7 +157,6 @@ TARGET_POWERHAL_SET_INTERACTIVE_EXT := $(PLATFORM_PATH)/power/power_ext.c
 BOARD_USES_QCOM_HARDWARE            := true
 
 # Radio
-TARGET_RIL_VARIANT                := caf
 FEATURE_QCRIL_UIM_SAP_SERVER_MODE := true
 TARGET_USES_OLD_MNC_FORMAT        := true
 
