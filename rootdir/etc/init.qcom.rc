@@ -648,3 +648,6 @@ on property:persist.radio.modem=LTE-CU
     setprop persist.radio.data_no_toggle 1
     setprop persist.fd.scroff.timer 3000
     setprop persist.fd.scron.timer 10000
+
+on property:apexd.status=ready
+    mount none /system/etc/swcodec/ld.config.txt /apex/com.android.media.swcodec/etc/ld.config.txt bind
