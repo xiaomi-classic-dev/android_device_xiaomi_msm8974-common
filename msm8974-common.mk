@@ -17,7 +17,7 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
-    $(LOCAL_PATH)/overlay-mokee
+    $(LOCAL_PATH)/overlay-lineage
 
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
@@ -265,7 +265,7 @@ PRODUCT_COPY_FILES += \
 
 # Trust HAL
 PRODUCT_PACKAGES += \
-    vendor.mokee.trust@1.0-service
+    vendor.lineage.trust@1.0-service
 
 # USB HAL
 PRODUCT_PACKAGES += \
