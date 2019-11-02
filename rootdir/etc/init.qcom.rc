@@ -412,11 +412,6 @@ on post-fs-data
 
     mkdir /data/audio/ 0770 media audio
 
-    # Key disabler
-    chown root system /sys/bus/i2c/drivers/cyttsp_streetfighter/2-0028/keys_off
-    chmod 0664 /sys/bus/i2c/drivers/cyttsp_streetfighter/2-0028/keys_off
-    restorecon /sys/bus/i2c/drivers/cyttsp_streetfighter/2-0028/keys_off
-
     setprop vold.post_fs_data_done 1
 
     #Create a folder for SRS to be able to create a usercfg file

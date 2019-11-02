@@ -92,19 +92,6 @@ on post-fs-data
     chmod 0664 /sys/class/timed_output/vibrator/amp
     restorecon /sys/class/timed_output/vibrator/amp
 
-    # KeyDisabler
-    chown root system /proc/touchscreen/nav_button_enable
-    chmod 0664 /proc/touchscreen/nav_button_enable
-    restorecon /proc/touchscreen/nav_button_enable
-
-    # HighTouchSensitivity
-    chown root system /proc/touchscreen/sensitive_mode
-    chmod 0664 /proc/touchscreen/sensitive_mode
-    restorecon /proc/touchscreen/sensitive_mode
-    chown root system /proc/touchscreen/stylus
-    chmod 0664 /proc/touchscreen/stylus
-    restorecon /proc/touchscreen/stylus
-
     # RBG calibration
     chown system system /sys/devices/virtual/graphics/fb0/rgb
     chmod 0660 /sys/devices/virtual/graphics/fb0/rgb
