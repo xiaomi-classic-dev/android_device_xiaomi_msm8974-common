@@ -60,6 +60,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.audio.fluence.voicecall=true \
     persist.vendor.audio.fluence.voicerec=false \
     af.fast_track_multiplier=1 \
+    debug.stagefright.omx_default_rank.sw-audio=1 \
+    debug.stagefright.omx_default_rank=0 \
     vendor.audio_hal.period_size=192 \
     persist.audio.vns.mode=2
 
