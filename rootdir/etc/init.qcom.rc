@@ -541,7 +541,7 @@ on property:ro.use_data_netmgrd=false
 on property:ro.data.large_tcp_window_size=true
     write /proc/sys/net/ipv4/tcp_adv_win_scale  2
     
-service fm_dl /vendor/bin/sh /vendor/bin/init.qcom.fm.sh
+service vendor.fm /vendor/bin/sh /vendor/bin/init.qcom.fm.sh
     class late_start
     user system
     group system
