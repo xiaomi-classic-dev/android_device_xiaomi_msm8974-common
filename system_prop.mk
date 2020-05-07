@@ -10,6 +10,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.extension_library=libqti-perfd-client.so \
     rild.libpath=/vendor/lib/libril-qc-qmi-1.so \
+    ril.subscription.types=NV,RUIM \
     persist.radio.apm_sim_not_pwdn=0 \
     mmp.enable.3g2=true \
     mm.enable.smoothstreaming=true \
