@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
+
 BOARD_VENDOR := xiaomi
 
 PLATFORM_PATH := device/xiaomi/msm8974-common
