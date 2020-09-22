@@ -183,6 +183,9 @@ ifeq ($(WITH_TWRP),true)
 -include $(PLATFORM_PATH)/twrp/twrp.mk
 endif
 
+# Vintf
+PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
+
 # Wifi
 BOARD_HAS_QCOM_WLAN              := true
 BOARD_WLAN_DEVICE                := qcwcn
