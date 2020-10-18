@@ -107,10 +107,6 @@ PRODUCT_PACKAGES += \
     libxml2 \
     Snap
 
-# Charger
-PRODUCT_PACKAGES += \
-    chargeonlymode
-
 # Filesystem management tools
 PRODUCT_PACKAGES += \
     make_ext4fs \
