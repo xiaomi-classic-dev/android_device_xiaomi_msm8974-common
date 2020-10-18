@@ -596,7 +596,7 @@ service ril-daemon3 /system/vendor/bin/hw/rild -c 3
     disabled
     group radio cache inet misc audio sdcard_r sdcard_rw diag oem_2950 log net_raw
 
-service charger /sbin/chargeonlymode
+service charger /system/bin/charger
     class charger
     group system graphics
     seclabel u:r:charger:s0
