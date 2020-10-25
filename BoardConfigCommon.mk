@@ -170,7 +170,6 @@ TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness
 VENDOR_SECURITY_PATCH := 2017-06-01
 
 # SELinux
-include device/qcom/sepolicy-legacy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(PLATFORM_PATH)/sepolicy
 
 # Time service

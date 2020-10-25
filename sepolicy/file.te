@@ -1,3 +1,2 @@
-#============= cmhw ==============
-type display_sysfs, sysfs_type, file_type;
-type vibeamp_sysfs, sysfs_type, file_type;
+# Default type for anything under /firmware.
+type firmware_file, fs_type, contextmount_type;

@@ -1,9 +1,2 @@
-/data/cam_socket.*                                           u:object_r:camera_socket:s0
-/data/system/sensors                                         u:object_r:device:s0
-/data/system/sensors/settings                                u:object_r:device:s0
-
-# Bluetooth
-/vendor/bin/bdaddr_xiaomi                                    u:object_r:bdaddr_exec:s0
-
-#============= cmhw ==============
-/sys/vibrator/pwmvalue                                       u:object_r:vibeamp_sysfs:s0
+/firmware(/.*)?          u:object_r:firmware_file:s0
+/persist(/.*)?          u:object_r:firmware_file:s0
