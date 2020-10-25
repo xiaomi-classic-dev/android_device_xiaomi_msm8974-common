@@ -172,9 +172,6 @@ Value *VerifyBasebandFn(const char *name, State *state, const std::vector<std::u
 
     ret = 0;
     for (auto& baseband_version : args) {
-        uiPrintf(state, "Comparing BASEBAND version %s to %s",
-                baseband_version.c_str(), current_baseband_version);
-
         if (strncmp(baseband_version.c_str(), current_baseband_version, baseband_version.length()) == 0) {
             ret = 1;
             break;
