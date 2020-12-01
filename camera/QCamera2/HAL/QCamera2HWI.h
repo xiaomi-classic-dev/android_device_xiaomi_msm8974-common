@@ -647,8 +647,6 @@ private:
     bool mAdvancedCaptureConfigured;
     int32_t mNumPreviewFaces;
     QCameraVideoMemory *mVideoMem;
-    nsecs_t mLastAFScanTime;
-    nsecs_t mLastCaptureTime;
 };
 
 }; // namespace qcamera
